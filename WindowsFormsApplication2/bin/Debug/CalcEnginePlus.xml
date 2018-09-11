@@ -1,0 +1,1111 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>CalcEnginePlus</name>
+  </assembly>
+  <members>
+    <member name="T:CalcEnginePlus.CalcEngineException">
+      <summary>
+            CalcEngine-specific exception that allows extra help to be supplied to users of the CalcEngine
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.CalcEngineException.#ctor">
+      <summary>
+            Initializes a new instance of the CalcEngineException class.
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.CalcEngineException.#ctor(System.String)">
+      <summary>
+            Initializes a new instance of the CalcEngineException class with a specified error message.
+            </summary>
+      <param name="message">The message that describes the error</param>
+    </member>
+    <member name="M:CalcEnginePlus.CalcEngineException.#ctor(System.String,System.Exception)">
+      <summary>
+            Initializes a new instance of the CalcEngineException class with a specified error message
+            and a reference to the inner exception that is the cause of this exception.
+            </summary>
+      <param name="message">The error message that explains the reason for the exception</param>
+      <param name="inner">The exception that is the cause of the current exception, or a 
+            null reference if no inner exception is specified</param>
+    </member>
+    <member name="M:CalcEnginePlus.CalcEngineException.#ctor(System.String,System.Exception,System.String,System.String,System.String,System.String)">
+      <summary>
+            Initializes a new instance of the CalcEngineException class with a specified error message
+            and a reference to the inner exception that is the cause of this exception.
+            </summary>
+      <param name="message">The error message that explains the reason for the exception</param>
+      <param name="inner">The exception that is the cause of the current exception, or a 
+            null reference if no inner exception is specified</param>
+      <param name="whatHappened">a user-friendly description of the problem</param>
+      <param name="whatIsAffected">a string describing the effects of the problem</param>
+      <param name="whatToDo">suggestions for the user on how the problem can be fixed</param>
+      <param name="supportInfo">a string containing support info (record id's, security tokens, etc)</param>
+    </member>
+    <member name="P:CalcEnginePlus.CalcEngineException.WhatHappened">
+      <summary>
+            Gets or sets a user-friendly description of the problem
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.CalcEngineException.WhatIsAffected">
+      <summary>
+            Gets or sets a string describing the effects of the problem
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.CalcEngineException.WhatToDo">
+      <summary>
+            Gets or sets a string with suggestions for the user on how the problem can be fixed
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.CalcEngineException.SupportInfo">
+      <summary>
+            Gets or sets a string containing support info (record id's, security tokens, etc)
+            </summary>
+    </member>
+    <member name="T:CalcEnginePlus.GenericArgument">
+      <summary>
+            Represents an argument to a function that takes all sorts of types as arguments. 
+            Could represent a DateTime, a double, or a Vector
+            </summary>
+    </member>
+    <member name="T:CalcEnginePlus.IContextualSubExpressionService">
+      <summary>
+            An interface that allows an application to support sub-expressions and hierarchy queries
+            in an environment where tagnames are not guaranteed to be unique. Supports the hierarchy 
+            keywords like "children"
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.IContextualSubExpressionService.GetSubExpression(System.Object,System.String)">
+      <summary>
+            Returns the sub-expression (if any) for the given unique tagId
+            </summary>
+      <param name="uniqueParentId">The unique tagId of the parent tag. Provides the context for the child being resolved</param>
+      <param name="tagname">a tag name to be resolved. Not globally unique. But unique among its siblings</param>
+      <returns>The sub-expression as a string, else null</returns>
+      <remarks>I guess this means we can't have duplicate sibling tagnames.</remarks>
+    </member>
+    <member name="M:CalcEnginePlus.IContextualSubExpressionService.GetChildTagEntities(System.Object)">
+      <summary>
+            Gets a List of the children of the given identifier in the form of  
+                {unique ID, tagname, expression} 
+            tuplets. Each 'unique ID' must itself be suitable for use as a TagResolutionContext
+            </summary>
+      <param name="uniqueId">The context to search in (the Id of a parent tag)</param>
+      <returns>A List of children in the form of <see cref="T:CalcEnginePlus.TagTuplet" /> objects. Null if 
+            the current parent is undefined or has been set to an invalid value</returns>
+      <remarks>Implementations must ensure that the 'unique ID' identifiers returned are 
+            truly unique. Implementations may choose to implement a uniqueId by means of a 
+            tagname, but this will not be sufficient if the application allows duplicated tagnames.</remarks>
+    </member>
+    <member name="M:CalcEnginePlus.IContextualSubExpressionService.GetUniqueIdFromTagname(System.Object,System.String)">
+      <summary>
+            Returns a uniqueTagId for the given tagname or null if not found. Should search the children of the given parentTagId
+            if present, else search across the whole database. Should throw an exception if the tagname is not unique.
+            </summary>
+      <param name="parentTagId">The context to search in (the Id of the parent tag)</param>
+      <param name="tagname">The tagname to be resolved</param>
+      <returns>
+            The unique ID corresponding to the given tagname or null
+            </returns>
+    </member>
+    <member name="T:CalcEnginePlus.IHierarchySubExpressionService">
+      <summary>
+            Defines a specialisation of the ISubExpressionService interface that enables support for the 
+            'children' keyword in a simple hierarchical data structure (i.e. one with unique tagnames)
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.IHierarchySubExpressionService.GetChildTagnames(System.String)">
+      <summary>
+            Get the list of tagnames or expression names that are direct children of the given tagname
+            </summary>
+      <param name="parentTagname">The name of the parent tag, whose children are sought</param>
+      <returns>a list of tagnames or null</returns>
+    </member>
+    <member name="T:CalcEnginePlus.IStringTagValueService">
+      <summary>
+            Specifies the methods and properties that an object must implement in order to 
+            serve string-valued tags
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.IStringTagValueService.GetStringValue(System.String,System.Boolean@,System.String@)">
+      <summary>
+            Gets a string representation of a tag's value
+            </summary>
+      <param name="tagname">The name of the entity whose value is sought (not case-sensitive)</param>
+      <param name="tagFound">a flag returned by the method, indicating whether the tagname was found</param>
+      <param name="providerErrorMessage">Error message set by the tag-retrieval logic, if any</param>
+      <returns>null if the tag's value cannot be found, or there is an error. Otherwise, the tag value as a string</returns>
+    </member>
+    <member name="T:CalcEnginePlus.ISubExpressionService">
+      <summary>
+            An interface that allows an application to support sub-expressions in an environment where tagnames are
+            guaranteed to be unique
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.ISubExpressionService.GetSubExpression(System.String)">
+      <summary>
+            Returns the sub-expression (if any) for the given tagname. 
+            </summary>
+      <param name="tagname">a tag name that may possibly expand to a sub-expression</param>
+      <returns>The subexpression as a string, else null</returns>
+    </member>
+    <member name="T:CalcEnginePlus.ITagValueService">
+      <summary>
+            Specifies the methods and properties that an object must implement
+            in order to supply tag values to the calc engine when asked.
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.ITagValueService.GetNumericValue(System.String,System.Boolean@,System.String@)">
+      <summary>
+            Returns a numeric value for the given tag. May set the error to "not numeric" if the result for the tagname is not numeric
+            </summary>
+      <param name="tagname">the tagname whose value is sought</param>
+      <param name="tagFound">a flag indicating whether the tag was found by the provider</param>
+      <param name="errorMessage">an error message returned by the provider. Should not be 
+            set just because the value is a string - returning NaN is enough in this case</param>
+      <returns>NaN if the tag's value cannot be found, or it's not a number, or there is an error.  Otherwise 
+            the tag's numeric value is returned.</returns>
+    </member>
+    <member name="T:CalcEnginePlus.UnknownFunctionOperator">
+      <summary>
+            The Unknown function indicates that we encountered something that looked like a function
+            but we didn't recognise it.
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.UnknownFunctionOperator.Result">
+      <summary>
+            An unknown function cannot ever return a result
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.UnknownFunctionOperator.ToStringWithEscapedTags">
+      <summary>
+            Renders the unknown function as a string
+            </summary>
+      <returns>
+      </returns>
+    </member>
+    <member name="M:CalcEnginePlus.UnknownFunctionOperator.ToString">
+      <summary>
+            Renders the unknown function as a string
+            </summary>
+      <returns>
+      </returns>
+    </member>
+    <member name="T:CalcEnginePlus.DateOperator">
+      <summary>
+            A DateOperator is an Operator that generates a DateTime. 
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.DateOperator.GetDateTime">
+      <summary>
+            Retrieves the DateTime encoded by the Operand
+            </summary>
+      <returns>
+      </returns>
+    </member>
+    <member name="M:CalcEnginePlus.DateOperator.FormatResult(System.String)">
+      <summary>
+            Calculates the Result, and formats it according to the given string
+            </summary>
+      <param name="formatString">A format string, suitable as an argument for the ToString() method</param>
+      <returns>The Result, formatted as a string</returns>
+    </member>
+    <member name="T:CalcEnginePlus.CustomFunction">
+      <summary>
+            This is an abstract class that end-users must inherit from in order to implement their own
+            calculations. A CustomFunction is an Operator.
+            </summary>
+      <remarks>
+            MyNumericFunc(expr)                         TreatArgsAsOpaqueStrings = false, parser.AcceptSpacesInTagname = false
+            MyNumericFunc(tagname with spaces)          TreatArgsAsOpaqueStrings = false, parser.AcceptSpacesInTagname = true
+            MyTagFunc(tagname with spaces and stuff)    TreatArgsAsOpaqueStrings = true, AcceptStringArgument returns false
+            MyLiteralFunc(literal, literal)             TreatArgsAsOpaqueStrings = true, AcceptStringArgument returns true
+            </remarks>
+    </member>
+    <member name="P:CalcEnginePlus.CustomFunction.TreatArgsAsOpaqueStrings">
+      <summary>
+            Gets a value indicating whether the arguments to the function are to be interpreted as literal strings. 
+            If true, then args are consumed as-is (spaces and all), before being presented to the AcceptStringArgument
+            function which will determine whether they are seen as tags or literals. If false, then args are expected
+             to be valid expressions; they will be tokenised and parsed as Operands in their own right.
+            </summary>
+      <remarks>If true, then the function will often override AcceptStringArgument</remarks>
+    </member>
+    <member name="P:CalcEnginePlus.CustomFunction.MaxArgs">
+      <summary>
+            Gets the maximum number of arguments that the custom function can handle
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.CustomFunction.MinArgs">
+      <summary>
+            Gets the minimum number of arguments that the custom function can handle
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.CustomFunction.OperandsOfType``1">
+      <summary>
+            Returns this Custom Function as a Hashset, if it is of the given type
+            </summary>
+      <returns>A set of all the required Operands of the specified Type</returns>
+      <remarks>Most often used to get a list of custom functions used by an Operand,
+             so that custom data-retrieval can be carried out before any Results are requested. We 
+            cache results and use TypeHandle for speed. 
+            <see cref="!:https://blogs.msdn.microsoft.com/vancem/2006/10/01/drilling-into-net-runtime-microbenchmarks-typeof-optimizations/" /></remarks>
+    </member>
+    <member name="M:CalcEnginePlus.CustomFunction.AcceptStringArgument(System.String)">
+      <summary>
+            The parser will present raw string arguments to CustomFunctions prior to parsing them. If the 
+            CustomFunction accepts raw strings as arguments, then it must deal with each argument and return
+            true. The argument will still be in the OperandList, but only as a string Literal. 
+            Otherwise, return false and the argument will be parsed as a tag, and be available the OperandList
+            as a Tag operand.
+            </summary>
+      <param name="arg">a string, perhaps one of several strings, that the CustomFunction will use to 
+            arrive at a Result</param>
+      <returns>
+      </returns>
+    </member>
+    <member name="M:CalcEnginePlus.CustomFunction.ToString">
+      <summary>
+            Generate a string representation
+            </summary>
+      <returns>A meaningful string representation of the custom function and it arguments</returns>
+    </member>
+    <member name="M:CalcEnginePlus.CustomFunction.ToStringWithEscapedTags">
+      <summary>
+            Renders the Operand as a string, with all tags rendered in "tag(xyz)" form
+            </summary>
+      <returns>The string representation of the Operand, using 'tag(x)' rather than 'x' for any Tags</returns>
+    </member>
+    <member name="T:CalcEnginePlus.Parser">
+      <summary>
+            A class that parses tag-based mathematical expressions, and returns Operands that can be evaluated
+            to return a result when tag data is available
+            </summary>
+      <content>
+            Methods for dealing with Expression Trees
+            </content>
+    </member>
+    <member name="F:CalcEnginePlus.Parser.FormatProvider">
+      <summary>
+            Object with culture info
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Parser.#ctor">
+      <summary>
+            Initializes a new instance of the Parser class with no ability to resolve tags into sub-expressions
+            and no ability to evaluate Tag operands. Only useful for parsing expressions, not for evaluating them.
+            </summary>
+      <remarks>A Parser constructed in this way is only useful to help other applications with simple
+            parsing duties.</remarks>
+    </member>
+    <member name="M:CalcEnginePlus.Parser.#ctor(CalcEnginePlus.ITagValueService,System.IFormatProvider)">
+      <summary>
+            Initializes a new instance of the Parser class with no ability to resolve tags into sub-expressions. Suitable
+            for applications where there is no database of pre-existing calc tags
+            </summary>
+      <param name="tagValueHelper">An object that can provide tag values when expressions are evaluated</param>
+      <param name="formatProvider">culture info</param>
+    </member>
+    <member name="M:CalcEnginePlus.Parser.#ctor(CalcEnginePlus.ITagValueService,CalcEnginePlus.IHierarchySubExpressionService,System.IFormatProvider)">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.Parser" /> class with helper objects for returning 
+            tag values and resolving sub-expressions in a hierarchical environment
+            </summary>
+      <param name="tagValueHelper">
+            An object that can provide values for a tag, propagated through to any Tag objects 
+            created as part of the parsing process
+            </param>
+      <param name="hierarchyHelper">an object that can look up the sub-expression or return the children of a tagname. </param>
+      <param name="formatProvider">culture info</param>
+    </member>
+    <member name="M:CalcEnginePlus.Parser.#ctor(CalcEnginePlus.ITagValueService,CalcEnginePlus.ISubExpressionService,System.IFormatProvider)">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.Parser" /> class with helper objects for returning 
+            tag values and resolving sub-expressions
+            </summary>
+      <param name="tagValueHelper">
+            An object that can provide values for a tag, propagated through to any Tag objects 
+            created as part of the parsing process
+            </param>
+      <param name="subExpressionHelper">an object that can look up a tagname and return any associated sub-expression</param>
+      <param name="formatProvider">culture info</param>
+    </member>
+    <member name="M:CalcEnginePlus.Parser.#ctor(CalcEnginePlus.ITagValueService,CalcEnginePlus.IContextualSubExpressionService,System.IFormatProvider)">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.Parser" /> class with helper objects for returning 
+            tag values and resolving sub-expressions
+            </summary>
+      <param name="tagValueHelper">
+            An object that can provide values for a tag, propagated through to any Tag objects 
+            created as part of the parsing process
+            </param>
+      <param name="contextAwareSubExpressionHelper">an object that can look up a possibly-duplicated tagname in the context
+            of a parent tag to return any associated sub-expression. Can also find children of a pissibly-duplicated tagname</param>
+      <param name="formatProvider">culture info</param>
+    </member>
+    <member name="P:CalcEnginePlus.Parser.AllowSpacesInNames">
+      <summary>
+            Gets or sets a value indicating whether spaces are permitted in the names of expressions and tags. Default is no
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Parser.CalcEngineHelper">
+      <summary>
+            Gets a reference to the helper object that supplies tag values to the calc engine
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Parser.SubExpressionHelper">
+      <summary>
+            Gets a reference to a subexpression-helper object that can resolve tagnames into sub-expressions
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Parser.HierarchyHelper">
+      <summary>
+            Gets a reference to a sub-expression helper object that can resolve tagnames into sub-expressions
+            and supports the "children" keyword, in simple hierarchies with no duplicates
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Parser.ContextualSubExpressionService">
+      <summary>
+            Gets a reference to a sub-expression helper object that can resolve tagnames into sub-expressions
+            even if there are duplicated tagnames, and can support the "children" keyword
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Parser.CanonicalFormHelper">
+      <summary>
+            Gets or sets a reference to an externally-provided helper object that 
+            can return a unique Id for a given tagname
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Parser.CustomFunctionLibrary">
+      <summary>
+            Gets or sets the filename (in the form filename.dll) of a library file containing CustomFunction classes
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Parser.Parse(System.String)">
+      <summary>
+            Parse a mathematical expression
+            </summary>
+      <param name="expression">the string expression to be parsed</param>
+      <returns>An operand that can return a result with the help of the tag value provider passed to the Parser constructor</returns>
+      <remarks>Parser method for a standalone expression, with no associated tagname</remarks>
+    </member>
+    <member name="M:CalcEnginePlus.Parser.Parse(System.String,System.String)">
+      <summary>
+            Parse a mathematical expression and associate the resultant Operand with the given tagname
+            </summary>
+      <param name="tagname">The name of a calc tag that identifies the expression being parsed. Must be unique</param>
+      <param name="expression">the string expression to be parsed</param>
+      <returns>An operand that can return a result with the help of the tag value provider passed to the Parser constructor</returns>
+    </member>
+    <member name="M:CalcEnginePlus.Parser.Parse(System.String,System.Object,System.String)">
+      <summary>
+            Parse a mathematical expression and associate the resultant Operand with the given tagname, which is identified by a unique Id
+            </summary>
+      <param name="tagname">The name of a calc tag that identifies the expression being parsed. Does not have to be unique. Can be null</param>
+      <param name="uniqueTagId">A token (int, string GUID, etc) that corresponds uniquely to the tagname. </param>
+      <param name="expression">the string expression to be parsed</param>
+      <returns>An operand that can return a result with the help of the tag value provider passed to the Parser constructor</returns>
+      <remarks>We may be seeing 'tagname' for the first time, or the caller may be changing the definition of
+            'tagname' to a new expression</remarks>
+    </member>
+    <member name="P:CalcEnginePlus.Parser.CacheMode">
+      <summary>
+            Gets or sets a value indicating whether operands managed by this parser should 
+            cache their values in between resets
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Parser.ResetCachedValues">
+      <summary>
+            Resets the cached value of each operand managed by this parser, which will force them
+            to be re-evaluated from scratch the next time a Result is requested
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Parser.CreateQueryable``1(System.Collections.Generic.IEnumerable{``0},System.String)">
+      <summary>
+            Filters a sequence of user-authored objects by a user-authored Where clause
+            </summary>
+      <typeparam name="T">The type of objects in the sequence</typeparam>
+      <param name="sourceData">The sequence of objects to be filtered</param>
+      <param name="whereClause">A WHERE clause that operates on properties of the source objects</param>
+      <returns>An executable query that returns source objects matching the WHERE clause</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="sourceData" /> is <see langword="null" />.</exception>
+      <exception cref="T:CalcEnginePlus.CalcEngineException">Invalid Where clause or parameter reference not found</exception>
+    </member>
+    <member name="M:CalcEnginePlus.Parser.RebaseExpression(System.Linq.Expressions.Expression,System.Type,System.Collections.Generic.Dictionary{System.String,System.Linq.Expressions.ParameterExpression})">
+      <summary>
+            Takes a Linq Expression typed to operate on doubles, and reformulates it to operate
+            on sequences of other types
+            </summary>
+      <param name="expression">The source Linq Expression</param>
+      <param name="targetType">The type of object we want the Expression to operate on</param>
+      <param name="paramDictionary">the parameter dictionary that is passed around through 
+            the recursion stack, making sure there is only one instance of the parameter
+            representing the target type</param>
+      <returns>The re-based expression</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="expression" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="T:CalcEnginePlus.Operand">
+      <summary>
+            Defines the interface that all Operands (things that can take part in an arithmetical expression)
+            must implement. Mathematically, all we demand of an Operand is that it can return us a value, which
+            we expose via the Result property. So an Operand can be a literal (4.33) or an expression (3.14*r*r).
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Operand.#ctor">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.Operand" /> class.
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Operand.#ctor(System.String)">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.Operand" /> class with an error message. This constructor is used for BadOperands, etc
+            </summary>
+      <param name="msg">An error message</param>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.Result">
+      <summary>
+            Gets the numeric value of the operand (calculation result, tag value, etc)
+            </summary>
+      <remarks>This will result in a full evaluation of the parse tree unless the parser is in cached mode</remarks>
+    </member>
+    <member name="F:CalcEnginePlus.Operand.cachedResult">
+      <summary>
+            The cached result to return
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.CachedResultRequiredAndReady">
+      <summary>
+            Gets a value indicating whether the operand is running in cached mode
+            and that there is a cached value available
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Operand.UpdateCache(System.Double)">
+      <summary>
+            Utility method to enable operators and functions to update the cache as they return
+            a Result to the caller.
+            </summary>
+      <param name="d">The value of the Result property to be cached and returned</param>
+      <returns>The numeric value passed as an argument</returns>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.IsBooleanOperator">
+      <summary>
+            Gets or sets a value indicating whether the Operand represents a boolean operator
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.IsTag">
+      <summary>
+            Gets or sets a value indicating whether the Operand represents a simple tag (as opposed to an expression or a literal)
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.IsStringLiteral">
+      <summary>
+            Gets or sets a value indicating whether the Operand represents a string Literal
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.ExpressionTree">
+      <summary>
+            Gets a Linq Expression representing the Operand
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.RequiredTags">
+      <summary>
+            Gets a HashSet of Tags that this Operand depends on. For example, the Literal returns 
+            an empty HashSet and the Tag object returns a HashSet containing one tagname.
+            Operators merge the RequiredTags from all their constituents.
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.RequiredEntities">
+      <summary>
+            Gets a HashSet consisting of tagnames and entity names (sub-expression names) that are
+            directly required by this Operand
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Operand.OperandsOfType``1">
+      <summary>
+            Gets a HashSet of constituent Operands that are required to evaluate this one, that 
+            are of the given Type (or inherit  from the given type). Most often used to get a 
+            list of custom functions used by an Operand, so that custom data-retrieval can be 
+            carried out before any Results are requested.
+            </summary>
+      <returns>A HashSet of all the required Operands of the specified Type</returns>
+      <remarks>Caching results and using TypeHandle for speed. 
+            <see cref="!:https://blogs.msdn.microsoft.com/vancem/2006/10/01/drilling-into-net-runtime-microbenchmarks-typeof-optimizations/" /></remarks>
+    </member>
+    <member name="M:CalcEnginePlus.Operand.As``1">
+      <summary>
+            Casts the operand to a particular type, even if it's a reference operand.
+            Returns null if the cast is not possible
+            </summary>
+      <typeparam name="T">The desired Operand type</typeparam>
+      <returns>The operand cast to the requested type, or null</returns>
+    </member>
+    <member name="F:CalcEnginePlus.Operand.cachedSubExpressionNames">
+      <summary>
+            To speed up the evaluation of 'AllSubExpressionNames'
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.HasError">
+      <summary>
+            Gets a value indicating whether this Operand had an error. Computed on the fly, and generally not reliable until Result has been requested.
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.ErrorMessage">
+      <summary>
+            Gets or sets any error string associated with this Operand. Invalid until Result has been evaluated. Sets the HasError property. 
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.EntityId">
+      <summary>
+            Gets or sets the entity ID used to uniquely identify this Operand. 
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.EntityName">
+      <summary>
+            Gets or sets the name this Operand uses to describe itself.
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.OriginalExpression">
+      <summary>
+            Gets or sets the original expression that was parsed to create this Operand
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.UserInfo">
+      <summary>
+            Gets or sets some information that is of interest to the caller
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.Operand.emptyHashset">
+      <summary>
+            An empty string set to be returned whenever the RequiredTags or NamedSubExpressionList property is requested
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.Operand.emptyObjectset">
+      <summary>
+            An empty object set to be returned whenever the RequiredTags or NamedSubExpressionList property is requested
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.Operand.emptyOperandSet">
+      <summary>
+            An empty set of Operands available for implementations of the OperandsOfType method
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operand.FormatString">
+      <summary>
+            Gets or sets the default format string for the Operand, used in the FormatResult() method
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Operand.FormatResult">
+      <summary>
+            Calculates the Result, and formats it according to the current FormatString
+            </summary>
+      <returns>The Result, formatted as a string. Note that inheritors need only to override the
+            FormatString property to return operand-specific format strings. See Tag, which implements
+            the FormatString property by asking the CalcEngineHelper to get a formatstring on
+            its behalf</returns>
+    </member>
+    <member name="M:CalcEnginePlus.Operand.FormatResult(System.String)">
+      <summary>
+            Calculates the Result, and formats it according to the given string
+            </summary>
+      <param name="f">A format string, suitable as an argument for the ToString() method</param>
+      <returns>The Result, formatted as a string</returns>
+    </member>
+    <member name="M:CalcEnginePlus.Operand.ClearErrorAndCheckArgCounts">
+      <summary>
+            Zeros any internal error message and clears the HasError flag.
+            </summary>
+      <returns>true if everything successful, else false</returns>
+    </member>
+    <member name="M:CalcEnginePlus.Operand.ToStringWithEscapedTags">
+      <summary>
+            Renders the Operand as a string, with all tags rendered in "tag(xyz)" form
+            </summary>
+      <returns>The string representation of the Operand, using 'tag(x)' rather than 'x' for any Tags</returns>
+    </member>
+    <member name="M:CalcEnginePlus.Operand.ToCanonicalString">
+      <summary>
+            Renders the operand expression as a string where all tags are replaced by
+            their unique Ids in the form {N}. In conjunction with an externally-
+            provided helper objects, this allows tagnames to change without breaking
+            calculations
+            </summary>
+      <returns>A string representation of the expression where all tags are
+            replaced by their unique Ids in the form {N}</returns>
+    </member>
+    <member name="T:CalcEnginePlus.Operator">
+      <summary>
+            An Operator is something like Multiply, Subtract, Take-sine-of, etc
+            It has a minimum allowable operands (things that it acts on), max allowable operands and an ordered 
+            operand list. It does not implement the Result property (hence it remains abstract). It leaves the
+            Result implementation to sub-classes, the actual concrete Operators.
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.Operator.operandList">
+      <summary>
+            One of the things that defines an Operator is that is has a list of arguments
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.Operator.minArgs">
+      <summary>
+            An Operator can specify a minimum number of arguments that the caller must provide
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.Operator.maxArgs">
+      <summary>
+            An Operator can specify a minimum number of arguments that the caller must provide
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.Operator.precedence">
+      <summary>
+            operator precedence
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Operator.Append(CalcEnginePlus.Operand)">
+      <summary>
+            Appends an operand to the list of arguments on which the Operator operates
+            </summary>
+      <param name="op">
+      </param>
+    </member>
+    <member name="M:CalcEnginePlus.Operator.RemoveLast">
+      <summary>
+            Pops the second (ie the last) argument off the list.
+            </summary>
+      <returns>The Operand removed from the end of the list</returns>
+    </member>
+    <member name="P:CalcEnginePlus.Operator.Precedence">
+      <summary>
+            Gets the operator precedence, as per <c>https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B#Operator_precedence</c></summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operator.RequiredTags">
+      <summary>
+            Gets a HashSet containing all of the external tag names on which this Operator ultimately depends
+            </summary>
+      <remarks>caches the required tags for speed purposes</remarks>
+    </member>
+    <member name="P:CalcEnginePlus.Operator.RequiredEntities">
+      <summary>
+            Gets a HashSet consisting of tagnames and entity names (sub-expression names) that are
+            directly required by this Operator
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Operator.OperandsOfType``1">
+      <summary>
+            Gets a HashSet of constituent Operands that are required to evaluate this Operator, that 
+            are of the given Type (or inherit  from the given type).
+            </summary>
+      <returns>A HashSet of all the constituent Operands of the specified Type, all the way 
+            down the expression tree</returns>
+      <remarks>Caching results and using TypeHandle for speed. 
+            <see cref="!:https://blogs.msdn.microsoft.com/vancem/2006/10/01/drilling-into-net-runtime-microbenchmarks-typeof-optimizations/" /></remarks>
+    </member>
+    <member name="M:CalcEnginePlus.Operator.ClearErrorAndCheckArgCounts">
+      <summary>
+            Zeros any internal error message and clears the HasError flag.
+            Then checks actual arg counts against minArgs and maxArgs limits.
+            </summary>
+      <returns>true if arg counts are in range, else false</returns>
+    </member>
+    <member name="M:CalcEnginePlus.Operator.ConvertOperandToDateTime(CalcEnginePlus.Operand)">
+      <summary>
+            Utility method for those functions that take a DateTime argument. It reliably
+            converts the given Operand to a DateTime, whether the argument is a DateTime
+            argument or a double. It preserves the value of the DateTimeKind property in
+            the former case.
+            </summary>
+      <param name="op">
+      </param>
+      <returns>a DateTime reflecting the value of the argument, else DateTime.MinValue
+            on error</returns>
+    </member>
+    <member name="P:CalcEnginePlus.Operator.OperandList">
+      <summary>
+            Gets a list of all the Operands required by this Operator
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.Operator.OwnerOperand">
+      <summary>
+            Gets or sets the entity whose parsing led to the existence of this Operator
+            </summary>
+    </member>
+    <member name="T:CalcEnginePlus.TabularOperands.TabularLiteral">
+      <summary>
+            A tabular literal, analogous to a numeric constant
+            </summary>
+    </member>
+    <member name="T:CalcEnginePlus.TabularOperands.TabularOperand">
+      <summary>
+            A tabular operand operates on tables, one way or another
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.TabularOperands.TabularOperand.Result">
+      <summary>
+            Gets the value of the operand (calculation result, tag value, etc)
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.TabularOperands.TabularOperand.RequiredTags">
+      <summary>
+            Gets a HashSet of Tags that this Operand depends on. For example, the Literal returns 
+            an empty HashSet and the Tag object returns a HashSet containing one tagname.
+            Operators merge the RequiredTags from all their constituents.
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.TabularOperands.TabularOperand.RequiredEntities">
+      <summary>
+            Gets a HashSet consisting of tagnames and entity names (sub-expression names) that are
+            directly required by this Operand
+            </summary>
+    </member>
+    <member name="T:CalcEnginePlus.Utility.DateTimeExtensions">
+      <summary>
+            Defines some extenstion methods for the DateTime type
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.Utility.DateTimeExtensions.Iso8601FormatWithTimezone">
+      <summary>        
+            The ISO 8601 format string with a timezone placeholder.
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.Utility.DateTimeExtensions.Iso8601FormatNoTimezone">
+      <summary>        
+            The ISO 8601 format string.
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.Utility.DateTimeExtensions.PiFormat">
+      <summary>        
+            The OSI PI format string.
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.Utility.DateTimeExtensions.ToISO8601WithTimezone(System.DateTime)">
+      <summary>
+            Converts DateTime to sortable Utc ISO 8601 string
+            </summary>
+      <param name="dateTime">DateTime to be converted</param>
+      <returns>A string in the form YYYY-MM-DDThh:mm:ssTZ</returns>
+    </member>
+    <member name="M:CalcEnginePlus.Utility.DateTimeExtensions.ToISO8601NoTimezone(System.DateTime)">
+      <summary>
+            Converts DateTime to sortable Utc ISO 8601 string
+            </summary>
+      <param name="dateTime">DateTime to be converted</param>
+      <returns>A string in the form YYYY-MM-DDThh:mm:ssTZ</returns>
+    </member>
+    <member name="M:CalcEnginePlus.Utility.DateTimeExtensions.ToUnixTimestamp(System.DateTime)">
+      <summary>
+            Get Unix timestamp from DateTime
+            </summary>
+      <param name="dateTime">DateTime to be converted</param>
+      <returns>seconds since Jan 1 1970</returns>
+    </member>
+    <member name="T:CalcEnginePlus.TagExpressionSplitter">
+      <summary>
+            Utility class to expose useful functions to client apps
+            </summary>
+      <remarks>Can we make this static?</remarks>
+    </member>
+    <member name="M:CalcEnginePlus.TagExpressionSplitter.SeparateExpressions(System.String,System.Boolean)">
+      <summary>
+            Teases out distinct tag expressions from a list of comma-separated expressions
+            </summary>
+      <param name="expressionList">a comma-separated list of tag expressions</param>
+      <param name="allowSpacesInNames">a flag indicating whether spaces are permitted in tagnames</param>
+      <returns>a list of discrete expressions</returns>
+      <remarks>Extracting comma-separated expressions from a string is made a little
+            more difficult when those expressions themselves can contain commas. Hence we
+            need to employ full-on calc-expression parsing techniques here.</remarks>
+    </member>
+    <member name="T:CalcEnginePlus.TagTuplet">
+      <summary>
+            Represents the necessary information to uniquely identify a tag in an application's datastore of tag entities, and
+            to have that tag parsed by the parser
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.TagTuplet.#ctor(System.Object,System.String,System.String)">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.TagTuplet" /> class.
+            </summary>
+      <param name="uniqueId">The unique id of the tag entity</param>
+      <param name="tagname">The user-facing name of the tag entity</param>
+      <param name="expression">The expression that the tag entity resolves to</param>
+    </member>
+    <member name="P:CalcEnginePlus.TagTuplet.UniqueId">
+      <summary>
+            Gets or sets a key that unambiguously identifies the tag in an application-wide store of tag entities
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.TagTuplet.Tagname">
+      <summary>
+            Gets or sets the tagname as it is known to the datastore
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.TagTuplet.Expression">
+      <summary>
+            Gets or sets the expression corresponding to the tagname
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.TagTuplet.ToString">
+      <summary>
+            Returns an easy-to-read representation of the TagTuplet
+            </summary>
+      <returns>A string which is an improvement on the default ToString rendering</returns>
+    </member>
+    <member name="T:CalcEnginePlus.VectorOperators.GenericArgFunction">
+      <summary>
+            A base class for functions that consume generic arguments, of any and all types.
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.VectorOperators.GenericArgFunction.operandList">
+      <summary>
+            A reference to the argument list, which could be composed of operands, 
+            DateTimes, strings, doubles and Vectors
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.VectorOperators.GenericArgFunction.minArgs">
+      <summary>
+            minimum number of argus required by the function
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.VectorOperators.GenericArgFunction.maxArgs">
+      <summary>
+            maximum number of args permitted by the function
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.GenericArgFunction.ErrorMessage">
+      <summary>
+            Gets or sets an error message
+            </summary>
+    </member>
+    <member name="T:CalcEnginePlus.VectorOperators.ITimestampedValue">
+      <summary>
+            Defines what a single time-stamped value has to look like for a vector operator to act on it
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.ITimestampedValue.Timestamp">
+      <summary>
+            Gets or sets the value timestamp
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.ITimestampedValue.Value">
+      <summary>
+            Gets or sets an optional numeric value for the given timestamp
+            </summary>
+    </member>
+    <member name="T:CalcEnginePlus.VectorOperators.LinearInterpolate">
+      <summary>
+            A function that produces a vector of time-stamped values by interpolating between
+            adjacent values in the source vector on every step
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.VectorOperators.LinearInterpolate.#ctor(System.DateTime,System.DateTime,System.TimeSpan,CalcEnginePlus.VectorOperators.TimeSeriesVector)">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.VectorOperators.LinearInterpolate" /> class.
+            </summary>
+      <param name="startDateTime">The earliest timestamp for any VectorResults</param>
+      <param name="endDateTime"> The oldest timestamp for vector results </param>
+      <param name="stepSize"> The step size for the output vector. </param>
+      <param name="sourceVector">Raw, time-stamped data upon which the LinearInterpolate function operates</param>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.LinearInterpolate.VectorResult">
+      <summary>
+            Gets a vector of regularly-spaced values by performing linear interpolation 
+            of the source vector in a series of time intervals, going from the most-recent to the oldest
+            </summary>
+      <returns>A vector of timestamped values</returns>
+    </member>
+    <member name="T:CalcEnginePlus.VectorOperators.VectorMax">
+      <summary>
+            A function that produces a vector of time-stamped values by detecting the maximum value
+            in every step through the source vector
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.VectorOperators.VectorMax.#ctor(System.DateTime,System.DateTime,System.TimeSpan,CalcEnginePlus.VectorOperators.TimeSeriesVector)">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.VectorOperators.VectorMax" /> class.
+            </summary>
+      <param name="startDateTime">The earliest timestamp for any VectorResults</param>
+      <param name="endDateTime"> The oldest timestamp for vector results </param>
+      <param name="stepSize"> The step size for the output vector. </param>
+      <param name="sourceVector">Raw, time-stamped data upon which the VectorMax function operates</param>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.VectorMax.VectorResult">
+      <summary>
+            Gets a vector of regularly-spaced values by computing the maximum value in each 
+            sub-interval of the source vector, stepping backwards from the most-recent to the oldest
+            </summary>
+      <returns>A vector of timestamped values</returns>
+    </member>
+    <member name="T:CalcEnginePlus.VectorOperators.VectorMin">
+      <summary>
+            A function that produces a vector of time-stamped values by detecting the minimum value
+            in every step through the source vector
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.VectorOperators.VectorMin.#ctor(System.DateTime,System.DateTime,System.TimeSpan,CalcEnginePlus.VectorOperators.TimeSeriesVector)">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.VectorOperators.VectorMin" /> class.
+            </summary>
+      <param name="startDateTime">The earliest timestamp for any VectorResults</param>
+      <param name="endDateTime"> The oldest timestamp for vector results </param>
+      <param name="stepSize"> The step size for the output vector. </param>
+      <param name="sourceVector">Raw, time-stamped data upon which the VectorMin function operates</param>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.VectorMin.VectorResult">
+      <summary>
+            Gets a vector of regularly-spaced values by computing the minimum value in each 
+            sub-interval of the source vector, stepping backwards from the most-recent to the oldest
+            </summary>
+      <returns>A vector of timestamped values</returns>
+    </member>
+    <member name="T:CalcEnginePlus.VectorOperators.StepInterpolate">
+      <summary>
+            A function that walks through an ordered TimeSeriesVector, producing LastKnownValue-type interpolated values
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.VectorOperators.StepInterpolate.#ctor(System.DateTime,System.DateTime,System.TimeSpan,CalcEnginePlus.VectorOperators.TimeSeriesVector)">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.VectorOperators.StepInterpolate" /> class for those caller who need to instantiate one directly
+            </summary>
+      <param name="startDateTime">The earliest timestamp of the result vector</param>
+      <param name="endDateTime">The final timestamp of the desired result vector</param>
+      <param name="stepSize">The step size</param>
+      <param name="sourceVector">The list of ITimeSeriesValues that will serve as the raw input for the interpolation</param>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.StepInterpolate.VectorResult">
+      <summary>
+            Gets a vector of regularly-spaced values by performing last-known-value interpolation of the source vector
+            </summary>
+      <returns>A vector of timestamped values</returns>
+    </member>
+    <member name="T:CalcEnginePlus.VectorOperators.TimeSeriesVector">
+      <summary>
+            A specialised Vector of timestamped values
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.VectorOperators.TimeSeriesVector.Add(System.DateTime,System.Nullable{System.Double})">
+      <summary>
+            Convenience method for adding {time, value} tuplets
+            </summary>
+      <param name="dateTime">the timestamp of the value</param>
+      <param name="v">the numeric value</param>
+    </member>
+    <member name="T:CalcEnginePlus.VectorOperators.TimeWeightedAverage">
+      <summary>
+            A function that produces a vector of time-stamped values by synthesizing a collection of
+            regularly-spaced, time-weighted average values from a set of irregularly-timestamped raw
+            values.
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.VectorOperators.TimeWeightedAverage.#ctor(System.DateTime,System.DateTime,System.TimeSpan,CalcEnginePlus.VectorOperators.TimeSeriesVector,System.Boolean)">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.VectorOperators.TimeWeightedAverage" /> class. </summary>
+      <param name="startDateTime">The earliest timestamp for any VectorResults</param>
+      <param name="endDateTime">The oldest timestamp for vector results</param>
+      <param name="stepSize">The step size for the output vector</param>
+      <param name="sourceVector">Raw, time-stamped data upon which the time-weighted function operates</param>
+      <param name="honorDataGaps">If true, then return NaN for intervals containing no raw data</param>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.TimeWeightedAverage.VectorResult">
+      <summary>
+            Create time weighted average vector from the source vector
+            </summary>
+      <returns>A vector of timestamped values</returns>
+    </member>
+    <member name="T:CalcEnginePlus.VectorOperators.Vector`1">
+      <summary>
+            A vector of elements. Like a List with an ErrorMessage
+            </summary>
+      <typeparam name="T">The element stored in the Vector</typeparam>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.Vector`1.ErrorMessage">
+      <summary>
+            Gets or sets an error message for the Vector
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.Vector`1.HasError">
+      <summary>
+            Gets a value indicating whether the Vector has an error associated with it
+            </summary>
+    </member>
+    <member name="T:CalcEnginePlus.VectorOperators.VectorProducingFunction`1">
+      <summary>
+            A VectorProducingFunction generates a vector. It takes a bunch of arguments of various sorts.
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.VectorProducingFunction`1.Start">
+      <summary>
+            Gets or sets the earliest timestamp of the result vector.
+            </summary>
+      <remarks>May pre-date the earliest member of the source vector</remarks>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.VectorProducingFunction`1.End">
+      <summary>
+            Gets or sets the final timestamp, used in generation of the VectorResult
+            </summary>
+      <remarks>May lie after the last date in the source vector</remarks>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.VectorProducingFunction`1.Step">
+      <summary>
+            Gets or sets the size of the steps. If the time range doesn't divide evenly into 'stepSize' pieces, then start at 'startTime'
+            and advance in 'stepSize' jumps, but don't go past endTime.
+            </summary>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.VectorProducingFunction`1.SourceVector">
+      <summary>
+            The source vector containing the raw data from which the StepInterpolate function will generate its results. There
+            is no guarantee that elements of the sourceVector will fall at regular intervals.
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.VectorOperators.VectorProducingFunction`1.#ctor(System.DateTime,System.DateTime,System.TimeSpan,CalcEnginePlus.VectorOperators.TimeSeriesVector)">
+      <summary>
+            Initializes a new instance of the <see cref="T:CalcEnginePlus.VectorOperators.VectorProducingFunction`1" /> class.
+            </summary>
+      <param name="startDateTime">The earliest timestamp for any VectorResults</param>
+      <param name="endDateTime"> The oldest timestamp for vector results </param>
+      <param name="stepSize"> The step size. </param>
+      <param name="sourceVector">Raw, time-stamped data upon which the vector functions operate</param>
+    </member>
+    <member name="P:CalcEnginePlus.VectorOperators.VectorProducingFunction`1.VectorResult">
+      <summary>
+            Gets a vector consisting a set of time-stamped values that are the result of an algorithm acting on the source vector
+            </summary>
+    </member>
+    <member name="M:CalcEnginePlus.VectorOperators.VectorProducingFunction`1.IsValid">
+      <summary>
+            Validate source vector and throw exception.
+            Right now, there is only one condition - elements should be sorted
+            </summary>
+      <returns>true if the source vector is valid, else false</returns>
+    </member>
+    <member name="T:CalcEnginePlus.TabularOperators.JoinSelect">
+      <summary>
+            Takes (table1, fieldname1, table2, fieldname2, [fieldnames, ]) and returns 
+            a table where the records have equal values for fieldname1 and fieldname2
+            which contains the nominated fieldnames drawn from both the contributing tables
+            </summary>
+    </member>
+    <member name="T:CalcEnginePlus.TabularOperators.TabularOperator">
+      <summary>
+            All tabular operations inherit from this.
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.TabularOperators.TabularOperator.operandList">
+      <summary>
+            One of the things that defines a TabularOperator is that is has a list of arguments
+            BUT: Not all of them will be TabularOperand - could be field names to join on.
+            </summary>
+    </member>
+    <member name="F:CalcEnginePlus.TabularOperators.TabularOperator.cachedTabularObject">
+      <summary>
+            The intermediate result can be cached.
+            </summary>
+    </member>
+    <member name="T:CalcEnginePlus.TabularOperators.Where">
+      <summary>
+            Implements a "Where"-clause facility
+            </summary>
+      <example>WHERE(sourceTable, whereClause)</example>
+    </member>
+  </members>
+</doc>
